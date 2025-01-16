@@ -6,19 +6,16 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Firebase\JWT\JWT;
 
 class UserService
 {
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordHasher;
-    private string $jwtSecret;
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, string $jwtSecret)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
     {
         $this->entityManager = $entityManager;
         $this->passwordHasher = $passwordHasher;
-        $this->jwtSecret = $jwtSecret;
     }
 
     public function createUser(string $username, string $password, string $displayName): User
@@ -64,15 +61,4 @@ class UserService
 
         $this->entityManager->flush();
     }
-
-    // public function generateToken(User $user): string
-    // {
-    //     $payload = [
-    //         'id' => $user->getId(),
-    //         'username' => $user->getUsername(),
-    //         'exp' => time() + 86400, // Token valid for 24 hours
-    //     ];
-
-    //     return JWT::encode($payload, $this->jwtSecret, 'HS256');
-    // }
 }

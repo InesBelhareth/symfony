@@ -6,6 +6,9 @@
 parameters:
 
 services:
+    App\Repository\:
+        resource: '../src/Repository'
+        tags: ['repository.service']
     App\Service\UserService:
         arguments:
             $jwtSecret: '%env(JWT_SECRET)%'

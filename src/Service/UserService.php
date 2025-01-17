@@ -61,4 +61,9 @@ class UserService
 
         $this->entityManager->flush();
     }
+    public function getUser(int $id): ?User
+    {
+        return $this->entityManager->getRepository(User::class)->find($id);
+    }
+    
 }

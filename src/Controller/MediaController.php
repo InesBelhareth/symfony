@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Service\TmdbApiService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use App\Repository\UserRepository;
 use App\Repository\FavoriteRepository;
 use App\Repository\ReviewRepository;
@@ -10,8 +12,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/media', name: 'media_')]
-class MediaController
+#[Route('/api/{mediaType}')]
+class MediaController extends AbstractController
 {
     private TmdbApiService $tmdbApiService;
     private UserRepository $userRepository;
@@ -31,10 +33,10 @@ class MediaController
     }
 
     #[Route('/search', name: 'search', methods: ['GET'])]
-    public function search(Request $request): JsonResponse
+    public function search(string $mediaType, Request $request): JsonResponse
     {
         try {
-            $mediaType = $request->query->get('mediaType', '');
+            //$mediaType = $request->query->get('mediaType', '');
             $query = $request->query->get('query', '');
             $page = $request->query->get('page', 1);
 
@@ -51,24 +53,31 @@ class MediaController
     }
 
     #[Route('/genres', name: 'genres', methods: ['GET'])]
-    public function getGenres(Request $request): JsonResponse
-    {
-        try {
-            $mediaType = $request->query->get('mediaType', '');
-            $response = $this->tmdbApiService->mediaGenres($mediaType);
+    public function getGenres(string $mediaType, Request $request): JsonResponse
+{
+    try {
+        //$mediaType = $request->query->get('mediaType', '');
 
-            return new JsonResponse($response, JsonResponse::HTTP_OK);
-        } catch (\Exception $e) {
-            return new JsonResponse(['error' => 'Something went wrong'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        // Debug the incoming mediaType
+        var_dump("Media Type: {$mediaType}");
+        die; // Stop further execution to inspect the output
+
+        $response = $this->tmdbApiService->mediaGenres($mediaType);
+
+        return new JsonResponse($response, JsonResponse::HTTP_OK);
+    } catch (\Exception $e) {
+        //error_log('Error in getGenres method: ' . $e->getMessage());
+        return new JsonResponse(['error' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
+
 
     #[Route('/detail/{mediaId}', name: 'detail', methods: ['GET'])]
-    public function getDetail(string $mediaId, Request $request): JsonResponse
+    public function getDetail(string $mediaType, string $mediaId, Request $request): JsonResponse
     {
         try {
-            $mediaType = $request->query->get('mediaType', '');
-            $mediaId = $request->query->get('mediaId', '');
+            //$mediaType = $request->query->get('mediaType', '');
+            //$mediaId = $request->query->get('mediaId', '');
             
             $media = $this->tmdbApiService->mediaDetail($mediaType,$mediaId);
 
@@ -106,10 +115,10 @@ class MediaController
     }
 
     #[Route('/{mediaCategory}', name: 'list', methods: ['GET'])]
-    public function getList(string $mediaCategory, Request $request): JsonResponse
+    public function getList(string $mediaType, string $mediaCategory, Request $request): JsonResponse
     {
         try {
-            $mediaType = $request->query->get('mediaType', '');
+            //$mediaType = $request->query->get('mediaType', '');
             $page = $request->query->get('page', 1);
 
             $response = $this->tmdbApiService->mediaList($mediaType, $mediaCategory, $page);

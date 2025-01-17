@@ -10,24 +10,45 @@ class TmdbApiService
     private string $apiBaseUrl;
     private string $apiKey;
 
-    public function __construct(HttpClientInterface $httpClient, string $tmdbApiKey, string $tmdbBaseUrl)
+    public function __construct(HttpClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
-        $this->apiBaseUrl = $tmdbBaseUrl;
-        $this->apiKey = $tmdbApiKey;
+       
     }
-
+/*
     private function getUrl(string $endpoint, array $params = []): string
     {
-        $queryParams = array_merge(['api_key' => $this->apiKey], $params);
-        $queryString = http_build_query($queryParams);
+        $queryParams = array_merge(['api_key' => "f2de0c3b19f237999b18ea3f3a73ac5e"], $params);
+        $queryString = http_build_query($params);
+        //return "https://api.themoviedb.org/3/{$endpoint}?api_key=f2de0c3b19f237999b18ea3f3a73ac5e&language=en-US&${params}";
 
-        return "{$this->apiBaseUrl}/{$endpoint}?{$queryString}";
+        //return ""
+
+        $url = "https://api.themoviedb.org/3/${endpoint}?api_key=your_api_key&language=en-US&page=${params}";
+        error_log("Generated URL: {$url}");
+
+        return $url;
     }
+        */
+
+    
+    public function getUrl(string $endpoint, array $params = []): string
+    {
+        $queryString = http_build_query(array_merge(['api_key' => "f2de0c3b19f237999b18ea3f3a73ac5e", 'language' => 'en-US'], $params));
+        $url = "https://api.themoviedb.org/3/{$endpoint}?{$queryString}";
+        
+        // Log the URL
+        error_log("Generated URL: {$url}");
+    
+        return $url;
+    }
+        
 
     public function mediaList(string $mediaType, string $mediaCategory, int $page): array
     {
         $url = $this->getUrl("{$mediaType}/{$mediaCategory}", ['page' => $page]);
+        error_log("Generated URL: {$url}");
+
         return $this->httpClient->request('GET', $url)->toArray();
     }
 

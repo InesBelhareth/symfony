@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Response;
 
-#[Route('/api/favorites')]
+#[Route('api/user/favorites')]
 class FavoriteController extends AbstractController
 {
     private FavoriteService $favoriteService;

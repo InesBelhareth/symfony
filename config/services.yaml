@@ -6,6 +6,7 @@
 parameters:
 
 services:
+    
     App\Repository\:
         resource: '../src/Repository'
         tags: ['repository.service']
